@@ -1,5 +1,6 @@
 const core = require("@actions/core");
 const github = require('@actions/github');
+const crypto = require('crypto');
 import fetch from 'node-fetch';
 
 try {
@@ -11,29 +12,29 @@ try {
 
   console.log(`The event payload: ${payload}`);
 
-  // Extract the branch name from the ref
-  // const ref = github.context.payload.ref;
-  const ref = core.getInput("commit_ref", { required: true });
-  const branchname = ref.split("/").slice(2).join("/");
+  const signature = crypto
+      .createHmac('sha1', secret)
+      .update(payload)
+      .digest('hex');
 
-  // Format the request parameters
-  const params = new URLSearchParams();
-  params.append("branches", branchname);
-  params.append("token", webhookToken);
+  // Send the payload to the webhook with the signature
+  const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-GitHub-Event': github.context.eventName,
+        'X-Hub-Signature:': signature, // Include the signature in the headers
+      },
+      body: payload,
+    });
 
-  // Execute the request
-  (async () => {
-    try {
-      const response = await fetch(webhookUrl, {
-        method: "POST",
-        body: params,
-      });
-      const json = await response.json();
-      console.log(json);
-    } catch (error) {
-      core.setFailed(error.message);
+    // Check if the request was successful
+    if (!response.ok) {
+      core.setFailed(`Failed to send payload to webhook: ${response.statusText}`);
     }
-  })();
-} catch (error) {
-  core.setFailed(error.message);
-}
+    else {
+      core.info(`Payload sent to webhook successfully: ${response.status}`);
+    }
+  } catch (error) {
+    core.setFailed(error.message);
+  }

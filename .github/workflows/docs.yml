@@ -39,6 +39,6 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: ./
         with:
-          webhook_url: blb
-          webhook_token: sadasf
+          webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
+          webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
           commit_ref: ${{ github.ref }}
