@@ -13871,7 +13871,7 @@ try {
   const webhookToken = core.getInput("webhook_token", { required: true });
 
   // Get the payload from the GitHub context
-  const payload = JSON.stringify(github.context.payload, undefined, 2);
+  var payload = JSON.stringify(github.context.payload, undefined, 2);
   payload = JSON.parse(payload);
   console.log(`The event payload: ${payload}`);
 
