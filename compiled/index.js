@@ -13888,7 +13888,7 @@ try {
       'X-GitHub-Event': github.context.eventName,
       'X-Hub-Signature': 'sha1='+signature, // Include the signature in the headers
     },
-    body: payload,
+    body: JSON.stringify(payload),
   });
 
   // Check if the request was successful
