@@ -13886,7 +13886,7 @@ try {
       headers: {
         'Content-Type': 'application/json',
         'X-GitHub-Event': github.context.eventName,
-        'X-Hub-Signature:': signature, // Include the signature in the headers
+        'X-Hub-Signature': signature, // Include the signature in the headers
       },
       body: payload,
     });
