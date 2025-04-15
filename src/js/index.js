@@ -1,9 +1,15 @@
 const core = require("@actions/core");
+const github = require('@actions/github');
 import fetch from 'node-fetch';
 
 try {
   const webhookUrl = core.getInput("webhook_url", { required: true });
   const webhookToken = core.getInput("webhook_token", { required: true });
+
+  // Get the payload from the GitHub context
+  const payload = JSON.stringify(github.context.payload, undefined, 2);
+
+  console.log(`The event payload: ${payload}`);
 
   // Extract the branch name from the ref
   // const ref = github.context.payload.ref;
