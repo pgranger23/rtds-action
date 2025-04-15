@@ -9,12 +9,12 @@ try {
 
   // Get the payload from the GitHub context
   const payload = JSON.stringify(github.context.payload, undefined, 2);
-
+  var payloadBuf = Buffer.from(payload, 'utf8');
   console.log(`The event payload: ${payload}`);
 
   const signature = 'sha1=' + crypto
       .createHmac('sha1', webhookToken)
-      .update(payload)
+      .update(payloadBuf)
       .digest('hex');
 
   // Send the payload to the webhook with the signature
@@ -25,7 +25,7 @@ try {
         'X-GitHub-Event': github.context.eventName,
         'X-Hub-Signature': signature, // Include the signature in the headers
       },
-      body: payload,
+      body: payloadBuf,
     });
 
     // Check if the request was successful
