@@ -9,13 +9,12 @@ try {
 
   // Get the payload from the GitHub context
   const payload = JSON.stringify(github.context.payload, undefined, 2);
-  var payloadBuf = Buffer.from(payload, 'utf8');
+  var payloadBuf = Buffer.from(payload, 'utf-8');
   const secretBuffer = Buffer.from(webhookToken, 'utf-8');
   console.log(`The event payload: ${payloadBuf}`);
-  console.log(`The secret buffer: ${secretBuffer}`);
 
   const signature = crypto
-      .createHmac('sha1', secretBuffer)
+      .createHmac('sha256', secretBuffer)
       .update(payloadBuf)
       .digest('hex');
 
@@ -25,7 +24,7 @@ try {
       headers: {
         'Content-Type': 'application/json',
         'X-GitHub-Event': github.context.eventName,
-        'X-Hub-Signature': 'sha1='+signature, // Include the signature in the headers
+        'X-Hub-Signature-256': 'sha256='+signature, // Include the signature in the headers
       },
       body: payload,
     });
