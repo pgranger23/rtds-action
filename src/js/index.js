@@ -13,7 +13,7 @@ try {
   console.log(`The event payload: ${payload}`);
 
   const signature = crypto
-      .createHmac('sha1', secret)
+      .createHmac('sha1', webhookToken)
       .update(payload)
       .digest('hex');
 
